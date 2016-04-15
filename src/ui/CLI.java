@@ -250,7 +250,7 @@ public class CLI {
 			e.printStackTrace();
 		}
 
-		if (id > 0)
+		if (id >= 0)
 			System.out.println("Book was saved successfully");
 		else
 			System.out.println("Error saving book");
@@ -322,7 +322,7 @@ public class CLI {
 			e.printStackTrace();
 		}
 
-		if (id > 0)
+		if (id >= 0)
 			System.out.println("Faculty was saved successfully");
 		else
 			System.out.println("Error saving faculty");
@@ -354,7 +354,7 @@ public class CLI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (id > 0)
+		if (id >= 0)
 			System.out.println("Student was saved successfully");
 		else
 			System.out.println("Error saving student");
