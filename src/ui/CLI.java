@@ -104,6 +104,7 @@ public class CLI {
 		System.out.println("Title: " + book.getTitle());
 		System.out.println("ISBN: " + book.getIsbn());
 		System.out.printf("Rate: %2.1f\n", book.getAverageRate());
+		System.out.println("Available copies: " + book.getAvailability());
 		System.out.println("Description: " + book.getDescription());
 		System.out.println("----------");
 	}
