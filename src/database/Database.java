@@ -35,17 +35,17 @@ public class Database {
 		return getTablePath(databaseTable) + "/info";
 	}
 
-	static final String getentryFilename(DatabaseTable databaseTable, int id) {
+	static final String getEntryFilename(DatabaseTable databaseTable, int id) {
 		return getTablePath(databaseTable) + "/" + id + ".dat";
 	}
 
-	int store(DatabaseTable databaseTable, RawEntry rawEntry) throws FileNotFoundException {
+	public int commit(DatabaseTable databaseTable, RawEntry rawEntry) throws FileNotFoundException {
 		boolean newEntry = (rawEntry.getId() == -1);
 		if (newEntry) {
 			rawEntry.setId(getLastEntryID(databaseTable) + 1);
 		}
 
-		PrintWriter out = new PrintWriter(getentryFilename(databaseTable, rawEntry.getId()));
+		PrintWriter out = new PrintWriter(getEntryFilename(databaseTable, rawEntry.getId()));
 
 		for (String line : rawEntry.getData()) {
 			out.println(line);
@@ -73,8 +73,8 @@ public class Database {
 		return id;
 	}
 
-	RawEntry load(DatabaseTable databaseTable, int id) throws FileNotFoundException {
-		return load(new File(getentryFilename(databaseTable, id)));
+	public RawEntry load(DatabaseTable databaseTable, int id) throws FileNotFoundException {
+		return load(new File(getEntryFilename(databaseTable, id)));
 	}
 
 	RawEntry load(File entryFile) throws FileNotFoundException {
@@ -91,7 +91,7 @@ public class Database {
 		return result;
 	}
 
-	ArrayList<RawEntry> loadAll(DatabaseTable databaseTable) throws FileNotFoundException {
+	public ArrayList<RawEntry> loadAll(DatabaseTable databaseTable) throws FileNotFoundException {
 		ArrayList<RawEntry> entries = new ArrayList<RawEntry>();
 
 		File tableDirectory = new File(getTablePath(databaseTable));
@@ -104,13 +104,9 @@ public class Database {
 		return entries;
 	}
 
-	void removeEntry(DatabaseTable databaseTable, int id) {
-		// TODO
-	}
-
-	int getLastEntryId(DatabaseTable databaseTable) {
-		// TODO
-		return 0;
+	public boolean removeEntry(DatabaseTable databaseTable, int id) {
+		File entryFile = new File(getEntryFilename(databaseTable, id));
+		return entryFile.delete();
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
@@ -119,8 +115,6 @@ public class Database {
 		data.add("amr");
 		data.add("pass");
 		RawEntry rawEntry = new RawEntry(2, data);
-		Database.getSingleton().store(DatabaseTable.BOOK, rawEntry);
-		Database.getSingleton().loadAll(DatabaseTable.BOOK);
+		Database.getSingleton().commit(DatabaseTable.BOOK, rawEntry);
 	}
-
 }
