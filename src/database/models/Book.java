@@ -18,13 +18,14 @@ public class Book implements Model {
 	private int edition;
 	private int availability;
 	private String description;
-	private int rate;
+	private int rateSum;
+	private int ratesCount;
 
 	public Book() {
 		id = -1;
 	}
 
-	public Book(String isbn, String title, String author, int edition, int availability, String description, int rate) {
+	public Book(String isbn, String title, String author, int edition, int availability, String description, int rateSum, int ratesCount) {
 		id = -1;
 		this.isbn = isbn;
 		this.title = title;
@@ -32,7 +33,8 @@ public class Book implements Model {
 		this.edition = edition;
 		this.availability = availability;
 		this.description = description;
-		this.rate = rate;
+		this.rateSum = rateSum;
+		this.ratesCount = ratesCount;
 	}
 
 	public static Book load(int id) throws FileNotFoundException {
@@ -50,7 +52,8 @@ public class Book implements Model {
 		edition = Integer.valueOf(rawEntry.getData().get(3));
 		availability = Integer.valueOf(rawEntry.getData().get(4));
 		description = rawEntry.getData().get(5);
-		rate = Integer.valueOf(rawEntry.getData().get(6));
+		rateSum = Integer.valueOf(rawEntry.getData().get(6));
+		ratesCount = Integer.valueOf(rawEntry.getData().get(7));
 	}
 
 	@Override
@@ -63,7 +66,8 @@ public class Book implements Model {
 		data.add(Integer.toString(edition));
 		data.add(Integer.toString(availability));
 		data.add(description);
-		data.add(Integer.toString(rate));
+		data.add(Integer.toString(rateSum));
+		data.add(Integer.toString(ratesCount));
 
 		return new RawEntry(id, data);
 	}
@@ -95,7 +99,7 @@ public class Book implements Model {
 
 	@Override
 	public String toString() {
-		return "{\"id\": " + id + ", \"ISBN\": \"" + isbn + "\", " + "\"Title\": \"" + title + "\", " + "\"Author\": \"" + author + "\", " + "\"Edition\": " + edition + ", " + "\"Availability\": " + availability + ", " + "\"Description\": \"" + description + "\", " + "\"Rate\": " + rate + "}";
+		return "{\"id\": " + id + ", \"ISBN\": \"" + isbn + "\", " + "\"Title\": \"" + title + "\", " + "\"Author\": \"" + author + "\", " + "\"Edition\": " + edition + ", " + "\"Availability\": " + availability + ", " + "\"Description\": \"" + description + "\", " + "\"Rate Sum\": " + rateSum + ", " + "\"Rates Count\": " + ratesCount + "}";
 	}
 
 	@Override
@@ -151,12 +155,28 @@ public class Book implements Model {
 		this.description = description;
 	}
 
-	public int getRate() {
-		return rate;
+	public int getRateSum() {
+		return rateSum;
 	}
 
-	public void setRate(int rate) {
-		this.rate = rate;
+	public void setRateSum(int rateSum) {
+		this.rateSum = rateSum;
 	}
 
+	public int getRatesCount() {
+		return ratesCount;
+	}
+
+	public void setRatesCount(int ratesCount) {
+		this.ratesCount = ratesCount;
+	}
+
+	public float getAverageRate() {
+		return (ratesCount != 0) ? (((float) rateSum) / ratesCount) : 0;
+	}
+
+	public void addRate(int rate) {
+		rateSum += rate;
+		ratesCount++;
+	}
 }

@@ -226,9 +226,9 @@ public class CLI {
 		System.out.print("Description: ");
 		String description = in.nextLine();
 
-		int rate = readInteger("Rate (0-5): ", 0, 5);
+		// int rate = readInteger("Rate (0-5): ", 0, 5);
 
-		Book book = new Book(isbn, title, author, edition, availability, description, rate);
+		Book book = new Book(isbn, title, author, edition, availability, description, 0, 0);
 		int id = -1;
 		try {
 			id = book.commit();
