@@ -1,9 +1,13 @@
 package ui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import database.models.Book;
+import database.models.Borrower;
+import database.models.Borrowing;
 import database.models.Faculty;
 import database.models.Student;
 import database.models.entities.Name;
@@ -33,6 +37,10 @@ public class CLI {
 				addNewBorrower();
 				break;
 
+			case 3:
+				borrowABook();
+				break;
+
 			case 0:
 				return;
 
@@ -42,6 +50,47 @@ public class CLI {
 			}
 			System.out.println("Press ENTER to continue");
 			in.nextLine();
+		}
+	}
+
+	private void borrowABook() {
+		try {
+			Book book = null;
+			ArrayList<Book> books = Book.loadAll();
+			while (book == null) {
+				System.out.print("Enter book's ISBN: ");
+				String isbn = in.nextLine();
+
+				for (Book b : books) {
+					if (b.getIsbn().equals(isbn)) {
+						book = b;
+						break;
+					}
+				}
+				if (book == null)
+					System.out.println("Book was not found");
+			}
+
+			Borrower borrower = null;
+			ArrayList<Borrower> borrowers = Borrower.loadAll();
+			while (borrower == null) {
+				System.out.print("Enter borrower's SSN: ");
+				String ssn = in.nextLine();
+
+				for (Borrower b : borrowers) {
+					if (b.getSsn().equals(ssn)) {
+						borrower = b;
+						break;
+					}
+				}
+				if (borrower == null)
+					System.out.println("Borrower was not found");
+			}
+
+			Borrowing borrowing = new Borrowing(book, borrower, new Date());
+			borrowing.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -188,6 +237,7 @@ public class CLI {
 	private void viewOptions() {
 		System.out.println("1- Add a new book");
 		System.out.println("2- Add a new borrower");
+		System.out.println("3- Borrow a book");
 
 		System.out.println("0- Exit");
 
