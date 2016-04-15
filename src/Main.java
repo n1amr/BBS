@@ -3,6 +3,7 @@ import java.io.IOException;
 import database.RawEntry;
 import database.models.Book;
 import database.models.Borrower;
+import database.models.Faculty;
 import database.models.Student;
 import database.models.entities.Name;
 
@@ -17,6 +18,14 @@ public class Main {
 		borrower = null;
 		borrower = Borrower.load(id);
 		System.out.println(borrower.MAX_BORROW);
+
+		Borrower borrower2 = new Faculty(new Name("amr", "alaa"), "ssn", "engineering", "degree");
+		int id2 = borrower2.commit();
+		borrower2 = null;
+		borrower2 = Borrower.load(id2);
+		System.out.println(borrower2.MAX_BORROW);
+
 		borrower.remove();
+		borrower2.remove();
 	}
 }

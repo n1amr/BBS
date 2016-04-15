@@ -10,7 +10,7 @@ public class BorrowerFactory {
 		if (borrowerType.equals(Borrower.TYPE_STUDENT)) {
 			borrower = new Student(rawEntry);
 		} else if (borrowerType.equals(Borrower.TYPE_FACULTY)) {
-
+			borrower = new Faculty(rawEntry);
 		}
 
 		return borrower;
