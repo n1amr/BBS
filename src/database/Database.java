@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,92 +35,91 @@ public class Database {
 		return getTablePath(databaseTable) + "/info";
 	}
 
-	static final String getRecordFilename(DatabaseTable databaseTable, int id) {
+	static final String getentryFilename(DatabaseTable databaseTable, int id) {
 		return getTablePath(databaseTable) + "/" + id + ".dat";
 	}
 
-	int store(DatabaseTable databaseTable, int id, String[] data) throws FileNotFoundException {
-		boolean newEntry = (id == -1);
+	int store(DatabaseTable databaseTable, RawEntry rawEntry) throws FileNotFoundException {
+		boolean newEntry = (rawEntry.getId() == -1);
 		if (newEntry) {
-			id = getLastRecordID(databaseTable) + 1;
+			rawEntry.setId(getLastEntryID(databaseTable) + 1);
 		}
 
-		PrintWriter out = new PrintWriter(getRecordFilename(databaseTable, id));
+		PrintWriter out = new PrintWriter(getentryFilename(databaseTable, rawEntry.getId()));
 
-		for (String line : data) {
+		for (String line : rawEntry.getData()) {
 			out.println(line);
 		}
 
 		out.flush();
 		out.close();
 
-		return 0;
+		return rawEntry.getId();
 	}
 
-	private int getLastRecordID(DatabaseTable databaseTable) {
+	private int getLastEntryID(DatabaseTable databaseTable) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	String[] load(DatabaseTable databaseTable, int id) throws FileNotFoundException {
-		return load(new File(getRecordFilename(databaseTable, id)));
+	int getEntryId(File entryFile) {
+		int id = -1;
+		Pattern pattern = Pattern.compile(".*/(\\d+)\\.dat");
+		Matcher matcher = pattern.matcher(entryFile.getName());
+
+		if (matcher.find())
+			id = Integer.valueOf(matcher.group(1));
+
+		return id;
 	}
 
-	String[] load(File recordFile) throws FileNotFoundException {
-		String[] result;
+	RawEntry load(DatabaseTable databaseTable, int id) throws FileNotFoundException {
+		return load(new File(getentryFilename(databaseTable, id)));
+	}
 
-		Scanner in = new Scanner(recordFile);
+	RawEntry load(File entryFile) throws FileNotFoundException {
+		int id = getEntryId(entryFile);
+		RawEntry result = new RawEntry(id, new ArrayList<String>());
 
-		LinkedList<String> lines = new LinkedList<String>();
+		Scanner in = new Scanner(entryFile);
+
 		while (in.hasNextLine())
-			lines.add(in.nextLine());
+			result.getData().add(in.nextLine());
 
 		in.close();
-		
-		int size = lines.size();
-		result = new String[size];
-		int i = 0;
-		for (String line : lines) {
-			result[i] = line;
-			i++;
-		}
+
 		return result;
 	}
 
-	String[][] loadAll(DatabaseTable databaseTable) {
-		// TODO
+	ArrayList<RawEntry> loadAll(DatabaseTable databaseTable) throws FileNotFoundException {
+		ArrayList<RawEntry> entries = new ArrayList<RawEntry>();
+
 		File tableDirectory = new File(getTablePath(databaseTable));
-		Pattern pattern = Pattern.compile("(\\d+)\\.dat");
-		Matcher matcher;
-		String filename;
-		int id = -1;
 
-		Scanner in;
-		for (File recordFile : tableDirectory.listFiles()) {
-			filename = recordFile.getName();
-			matcher = pattern.matcher(filename);
-
-			if (matcher.find()) {
-				id = Integer.valueOf(matcher.group(1));
-			}
-
+		for (File entryFile : tableDirectory.listFiles()) {
+			RawEntry entry = load(entryFile);
+			entries.add(entry);
 		}
-		System.out.println(tableDirectory.getAbsolutePath());
-		return null;
+
+		return entries;
 	}
 
-	void removeRecord(DatabaseTable databaseTable, int id) {
+	void removeEntry(DatabaseTable databaseTable, int id) {
 		// TODO
 	}
 
-	int get_last_id(DatabaseTable databaseTable) {
+	int getLastEntryId(DatabaseTable databaseTable) {
 		// TODO
 		return 0;
 	}
 
 	public static void main(String[] args) throws FileNotFoundException {
 		System.out.println("Hello");
-		Database.getSingleton().store(DatabaseTable.BOOK, 2, new String[] { "amr", "pass" });
+		ArrayList<String> data = new ArrayList<>();
+		data.add("amr");
+		data.add("pass");
+		RawEntry rawEntry = new RawEntry(2, data);
+		Database.getSingleton().store(DatabaseTable.BOOK, rawEntry);
 		Database.getSingleton().loadAll(DatabaseTable.BOOK);
 	}
 
