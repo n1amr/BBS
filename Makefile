@@ -44,8 +44,7 @@ $(OBJDIR)/%.class: $(SRCDIR)/%.java | $(OBJDIR)
 	@$(RM) -f temp.errors temp.log
 
 clean:
-	$(RM) -rf *.class *~ ./$(TARGET) $(OBJECTS)
-	$(RM) -f temp.errors temp.log
+	$(RM) -rf $(OBJDIR)/*
 
 run: all
 	@java -classpath $(OBJDIR) $(TARGET);
