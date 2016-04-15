@@ -1,13 +1,15 @@
+
 package database.models;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import database.Database;
 import database.DatabaseTable;
 import database.RawEntry;
 
-public class Book {
+public class Book implements Model {
 	private int id;
 
 	private String isbn;
@@ -75,8 +77,8 @@ public class Book {
 		return books;
 	}
 
-	public void commit() throws FileNotFoundException {
-		Database.getSingleton().commit(DatabaseTable.BOOK, toRawEntry());
+	public int commit() throws IOException {
+		return Database.getSingleton().commit(DatabaseTable.BOOK, toRawEntry());
 	}
 
 	public void remove() {

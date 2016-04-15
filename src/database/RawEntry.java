@@ -26,4 +26,13 @@ public class RawEntry {
 	public void setData(ArrayList<String> data) {
 		this.data = data;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (String s : data) {
+			sb.append(s + "\n");
+		}
+		return sb.toString();
+	}
 }

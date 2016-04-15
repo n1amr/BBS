@@ -2,13 +2,10 @@ package database;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +36,7 @@ public class Database {
 		return getTablePath(databaseTable) + "/" + id + ".dat";
 	}
 
-	public int commit(DatabaseTable databaseTable, RawEntry rawEntry) throws FileNotFoundException {
+	public int commit(DatabaseTable databaseTable, RawEntry rawEntry) throws IOException {
 		boolean newEntry = (rawEntry.getId() == -1);
 		if (newEntry) {
 			rawEntry.setId(getLastEntryID(databaseTable) + 1);
@@ -54,17 +51,41 @@ public class Database {
 		out.flush();
 		out.close();
 
+		// Update last id value
+		if (newEntry) {
+			out = new PrintWriter(getTableInfoFilename(databaseTable));
+			out.println(rawEntry.getId());
+			out.flush();
+			out.close();
+		}
+
 		return rawEntry.getId();
 	}
 
-	private int getLastEntryID(DatabaseTable databaseTable) {
-		// TODO Auto-generated method stub
-		return 0;
+	private int getLastEntryID(DatabaseTable databaseTable) throws IOException {
+		File file = new File(getTableInfoFilename(databaseTable));
+		if (!file.exists()) {
+			file.createNewFile();
+			PrintWriter out = new PrintWriter(file);
+			out.println("-1");
+			out.flush();
+			out.close();
+		}
+		
+		Scanner in = new Scanner(file);
+
+		int id = -1;
+		if (in.hasNextInt())
+			id = in.nextInt();
+
+		in.close();
+		
+		return id;
 	}
 
-	int getEntryId(File entryFile) {
+	int getEntryID(File entryFile) {
 		int id = -1;
-		Pattern pattern = Pattern.compile(".*/(\\d+)\\.dat");
+		Pattern pattern = Pattern.compile("(\\d+)\\.dat$");
 		Matcher matcher = pattern.matcher(entryFile.getName());
 
 		if (matcher.find())
@@ -78,7 +99,7 @@ public class Database {
 	}
 
 	RawEntry load(File entryFile) throws FileNotFoundException {
-		int id = getEntryId(entryFile);
+		int id = getEntryID(entryFile);
 		RawEntry result = new RawEntry(id, new ArrayList<String>());
 
 		Scanner in = new Scanner(entryFile);
@@ -107,14 +128,5 @@ public class Database {
 	public boolean removeEntry(DatabaseTable databaseTable, int id) {
 		File entryFile = new File(getEntryFilename(databaseTable, id));
 		return entryFile.delete();
-	}
-
-	public static void main(String[] args) throws FileNotFoundException {
-		System.out.println("Hello");
-		ArrayList<String> data = new ArrayList<>();
-		data.add("amr");
-		data.add("pass");
-		RawEntry rawEntry = new RawEntry(2, data);
-		Database.getSingleton().commit(DatabaseTable.BOOK, rawEntry);
 	}
 }
