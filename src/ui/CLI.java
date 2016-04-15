@@ -69,9 +69,7 @@ public class CLI {
 			for (Borrowing b : borrowings) {
 				Book bk = b.getBook();
 				books.add(bk);
-				System.out.println("Title: " + bk.getTitle());
-				System.out.println("ISBN: " + bk.getIsbn());
-				System.out.println("----------");
+				viewBook(bk);
 			}
 
 			Book book = selectBook(books);
@@ -101,16 +99,20 @@ public class CLI {
 		borrower.commit();
 	}
 
+	private void viewBook(Book book) {
+		System.out.println("Book #" + book.getId());
+		System.out.println("Title: " + book.getTitle());
+		System.out.println("ISBN: " + book.getIsbn());
+		System.out.printf("Rate: %2.1f\n", book.getAverageRate());
+		System.out.println("Description: " + book.getDescription());
+		System.out.println("----------");
+	}
+
 	private void viewCatalogue() {
 		try {
 			ArrayList<Book> books = Book.loadAll();
-			for (Book book : books) {
-				System.out.println("Book #" + book.getId());
-				System.out.println("Title: " + book.getTitle());
-				System.out.println("ISBN: " + book.getIsbn());
-				System.out.println("Description: " + book.getDescription());
-				System.out.println("----------");
-			}
+			for (Book book : books)
+				viewBook(book);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
