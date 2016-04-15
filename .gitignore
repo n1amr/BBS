@@ -1,0 +1,6 @@
+*
+!*/
+!*.java
+!Makefile
+!.gitignore
+/bin/
