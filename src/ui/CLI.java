@@ -41,6 +41,10 @@ public class CLI {
 				borrowABook();
 				break;
 
+			case 5:
+				viewCatalogue();
+				break;
+
 			case 0:
 				return;
 
@@ -50,6 +54,21 @@ public class CLI {
 			}
 			System.out.println("Press ENTER to continue");
 			in.nextLine();
+		}
+	}
+
+	private void viewCatalogue() {
+		try {
+			ArrayList<Book> books = Book.loadAll();
+			for (Book book : books) {
+				System.out.println("Book #" + book.getId());
+				System.out.println("Title: " + book.getTitle());
+				System.out.println("ISBN: " + book.getIsbn());
+				System.out.println("Description: " + book.getDescription());
+				System.out.println("----------");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -238,6 +257,8 @@ public class CLI {
 		System.out.println("1- Add a new book");
 		System.out.println("2- Add a new borrower");
 		System.out.println("3- Borrow a book");
+		System.out.println("4- ");
+		System.out.println("5- View books catalogue");
 
 		System.out.println("0- Exit");
 
