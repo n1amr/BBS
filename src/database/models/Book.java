@@ -99,7 +99,7 @@ public class Book implements Model {
 
 	@Override
 	public String toString() {
-		return "{\"id\": " + id + ", \"ISBN\": \"" + isbn + "\", " + "\"Title\": \"" + title + "\", " + "\"Author\": \"" + author + "\", " + "\"Edition\": " + edition + ", " + "\"Availability\": " + availability + ", " + "\"Description\": \"" + description + "\", " + "\"Rate Sum\": " + rateSum + ", " + "\"Rates Count\": " + ratesCount + "}";
+		return "{\"id\": " + id + ", \"ISBN\": \"" + isbn + "\", " + "\"Title\": \"" + title + "\", " + "\"Author\": \"" + author + "\", " + "\"Edition\": " + edition + ", " + "\"Availability\": " + availability + ", " + "\"Description\": \"" + description + "\", " + "\"Rate Sum\": " + rateSum + ", " + "\"Rates Count\": " + ratesCount + "\"Average Rate\": " + getAverageRate() + "}";
 	}
 
 	@Override

@@ -89,6 +89,9 @@ public class CLI {
 	}
 
 	private void returnABook(Borrowing borrowing, Borrower borrower, Book book) throws IOException {
+		int rate = readInteger("Rate this book (1-5): ");
+		book.addRate(rate);
+
 		borrowing.setReturned(true);
 		borrower.setBorrowCount(borrower.getBorrowCount() - 1);
 		book.setAvailability(book.getAvailability() + 1);
