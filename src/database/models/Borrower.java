@@ -14,6 +14,7 @@ public abstract class Borrower implements Model {
 
 	protected Name name;
 	protected String ssn;
+	protected int borrowCount = 0;
 
 	public static final int MAX_BORROW = 0;
 
@@ -21,10 +22,11 @@ public abstract class Borrower implements Model {
 		id = -1;
 	}
 
-	public Borrower(Name name, String ssn) {
+	public Borrower(Name name, String ssn, int borrowCount) {
 		id = -1;
 		this.name = name.getCopy();
 		this.ssn = ssn;
+		this.borrowCount = borrowCount;
 	}
 
 	public static Borrower load(int id) throws FileNotFoundException {
@@ -39,6 +41,7 @@ public abstract class Borrower implements Model {
 		String lastName = rawEntry.getData().get(1);
 		name = new Name(firstName, lastName);
 		ssn = rawEntry.getData().get(2);
+		borrowCount = Integer.valueOf(rawEntry.getData().get(3));
 	}
 
 	public static ArrayList<Borrower> loadAll() throws FileNotFoundException {
@@ -66,6 +69,7 @@ public abstract class Borrower implements Model {
 		data.add(name.getFirstName());
 		data.add(name.getLastName());
 		data.add(ssn);
+		data.add(Integer.toString(borrowCount));
 
 		return new RawEntry(id, data);
 	}
@@ -84,9 +88,21 @@ public abstract class Borrower implements Model {
 		return MAX_BORROW;
 	}
 
+	public int getBorrowCount() {
+		return borrowCount;
+	}
+
+	public void getBorrowCount(int borrowCount) {
+		this.borrowCount = borrowCount;
+	}
+
+	public boolean canBorrow() {
+		return borrowCount < MAX_BORROW;
+	}
+
 	@Override
 	public String toString() {
-		return "{\"id\": " + id + ", \"Name\": " + name + ", " + "\"SSN\": \"" + ssn + "\"}";
+		return "{\"id\": " + id + ", \"Name\": " + name + ", " + "\"SSN\": \"" + ssn + "\", \"Borrow Count\": " + borrowCount + "}";
 	}
 
 	@Override

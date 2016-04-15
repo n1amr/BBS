@@ -18,8 +18,8 @@ public class Faculty extends Borrower implements Model {
 		super();
 	}
 
-	public Faculty(Name name, String ssn, String title, String degree) {
-		super(name, ssn);
+	public Faculty(Name name, String ssn, int borrowCount, String title, String degree) {
+		super(name, ssn, borrowCount);
 		this.title = title;
 		this.degree = degree;
 	}
@@ -34,8 +34,8 @@ public class Faculty extends Borrower implements Model {
 	public Faculty(RawEntry rawEntry) {
 		super(rawEntry);
 
-		title = rawEntry.getData().get(4);
-		degree = rawEntry.getData().get(5);
+		title = rawEntry.getData().get(5);
+		degree = rawEntry.getData().get(6);
 	}
 
 	@Override

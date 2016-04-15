@@ -200,13 +200,14 @@ public class CLI {
 
 		System.out.print("SSN: ");
 		String ssn = in.nextLine();
+		int borrowCount = 0;
 
 		System.out.print("Title: ");
 		String title = in.nextLine();
 		System.out.print("Degree: ");
 		String degree = in.nextLine();
 
-		Faculty faculty = new Faculty(name, ssn, title, degree);
+		Faculty faculty = new Faculty(name, ssn, borrowCount, title, degree);
 
 		int id = -1;
 		try {
@@ -233,11 +234,13 @@ public class CLI {
 		System.out.print("SSN: ");
 		String ssn = in.nextLine();
 
+		int borrowCount = 0;
+
 		int student_id_number = readInteger("ID: ");
 		int faculty_id = readInteger("Faculty ID: ");
 		int level = readInteger("Level: ");
 
-		Student student = new Student(name, ssn, student_id_number, faculty_id, level);
+		Student student = new Student(name, ssn, borrowCount, student_id_number, faculty_id, level);
 
 		int id = -1;
 		try {
@@ -259,6 +262,7 @@ public class CLI {
 		System.out.println("3- Borrow a book");
 		System.out.println("4- ");
 		System.out.println("5- View books catalogue");
+		System.out.println("6- View borrowing status");
 
 		System.out.println("0- Exit");
 

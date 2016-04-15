@@ -19,15 +19,15 @@ public class Student extends Borrower implements Model {
 		super();
 	}
 
-	public Student(Name name, String ssn, int student_id_number, int faculty_id, int level) {
-		super(name, ssn);
+	public Student(Name name, String ssn, int borrowCount, int student_id_number, int faculty_id, int level) {
+		super(name, ssn, borrowCount);
 		this.student_id_number = student_id_number;
 		this.faculty_id = faculty_id;
 		this.level = level;
 	}
 
-	public Student(Name name, String ssn, int student_id_number, Faculty faculty, int level) {
-		this(name, ssn, student_id_number, faculty.getId(), level);
+	public Student(Name name, String ssn, int borrowCount, int student_id_number, Faculty faculty, int level) {
+		this(name, ssn, borrowCount, student_id_number, faculty.getId(), level);
 	}
 
 	public static Student load(int id) throws FileNotFoundException {
@@ -40,9 +40,9 @@ public class Student extends Borrower implements Model {
 	public Student(RawEntry rawEntry) {
 		super(rawEntry);
 
-		student_id_number = Integer.valueOf(rawEntry.getData().get(4));
-		faculty_id = Integer.valueOf(rawEntry.getData().get(5));
-		level = Integer.valueOf(rawEntry.getData().get(6));
+		student_id_number = Integer.valueOf(rawEntry.getData().get(5));
+		faculty_id = Integer.valueOf(rawEntry.getData().get(6));
+		level = Integer.valueOf(rawEntry.getData().get(7));
 	}
 
 	@Override
