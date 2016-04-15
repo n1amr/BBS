@@ -19,9 +19,26 @@ public class Database {
 	}
 
 	public static Database getSingleton() {
-		if (singleton == null)
+		if (singleton == null) {
 			singleton = new Database();
+			checkFiles();
+		}
+
 		return singleton;
+	}
+
+	static void checkFiles() {
+		File dir;
+
+		dir = new File(getTablePath(DatabaseTable.BOOK));
+		if (!dir.exists())
+			dir.mkdirs();
+		dir = new File(getTablePath(DatabaseTable.BORROWING));
+		if (!dir.exists())
+			dir.mkdirs();
+		dir = new File(getTablePath(DatabaseTable.BORROWER));
+		if (!dir.exists())
+			dir.mkdirs();
 	}
 
 	static final String getTablePath(DatabaseTable databaseTable) {

@@ -50,7 +50,6 @@ public class Faculty extends Borrower implements Model {
 		return rawEntry;
 	}
 
-
 	@Override
 	public String toString() {
 		return "{\"id\": " + id + ", \"Title\": \"" + title + "\", \"Degree\": \"" + degree + "\"}";
@@ -71,6 +70,8 @@ public class Faculty extends Borrower implements Model {
 	public void setDegree(String degree) {
 		this.degree = degree;
 	}
+
+	@Override
 	public boolean canBorrow() {
 		return borrowCount < 10;
 	}

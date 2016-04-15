@@ -16,8 +16,6 @@ public abstract class Borrower implements Model {
 	protected String ssn;
 	protected int borrowCount = 0;
 
-	
-
 	public Borrower() {
 		id = -1;
 	}
@@ -83,7 +81,6 @@ public abstract class Borrower implements Model {
 	public void remove() {
 		Database.getSingleton().removeEntry(DatabaseTable.BORROWER, id);
 	}
-
 
 	public int getBorrowCount() {
 		return borrowCount;

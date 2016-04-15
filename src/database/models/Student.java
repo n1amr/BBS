@@ -95,6 +95,8 @@ public class Student extends Borrower implements Model {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+
+	@Override
 	public boolean canBorrow() {
 		return borrowCount < 5;
 	}

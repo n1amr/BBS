@@ -64,7 +64,7 @@ public class CLI {
 				System.out.println("This borrower has no active borrowing");
 				return;
 			}
-			
+
 			ArrayList<Book> books = new ArrayList<Book>();
 			for (Borrowing b : borrowings) {
 				Book bk = b.getBook();
@@ -73,15 +73,14 @@ public class CLI {
 				System.out.println("ISBN: " + bk.getIsbn());
 				System.out.println("----------");
 			}
-			
+
 			Book book = selectBook(books);
 			Borrowing borrowing = null;
-			for (Borrowing b : borrowings) {
+			for (Borrowing b : borrowings)
 				if (b.getBookId() == book.getId() && b.getBorrowerId() == borrower.getId()) {
 					borrowing = b;
 					break;
 				}
-			}
 
 			returnABook(borrowing, borrower, book);
 		} catch (Exception e) {
@@ -121,20 +120,19 @@ public class CLI {
 
 			boolean borrowedBefore = false;
 			ArrayList<Borrowing> borrowings = findBookActiveBorrowings(book);
-			for (Borrowing b : borrowings) {
+			for (Borrowing b : borrowings)
 				if (b.getBorrowerId() == borrower.getId()) {
 					borrowedBefore = true;
 					break;
 				}
-			}
 
-			if (borrowedBefore) {
+			if (borrowedBefore)
 				System.out.println("This borrower has already borrowed a copy of this book");
-			} else if (!borrower.canBorrow()) {
+			else if (!borrower.canBorrow())
 				System.out.println("Borrower has reached their borrow limit.");
-			} else if (book.getAvailability() == 0) {
+			else if (book.getAvailability() == 0)
 				System.out.println("Book has not available copy for borrowing.");
-			} else {
+			else {
 				createBorrowing(borrower, book);
 				System.out.println("Book was successfully borrowed");
 			}
@@ -170,12 +168,11 @@ public class CLI {
 			System.out.print("Enter borrower's SSN: ");
 			String ssn = in.nextLine();
 
-			for (Borrower b : borrowers) {
+			for (Borrower b : borrowers)
 				if (b.getSsn().equals(ssn)) {
 					borrower = b;
 					break;
 				}
-			}
 			if (borrower == null)
 				System.out.println("Borrower was not found");
 		}
@@ -193,12 +190,11 @@ public class CLI {
 			System.out.print("Enter book's ISBN: ");
 			String isbn = in.nextLine();
 
-			for (Book b : books) {
+			for (Book b : books)
 				if (b.getIsbn().equals(isbn)) {
 					book = b;
 					break;
 				}
-			}
 			if (book == null)
 				System.out.println("Book was not found");
 		}
@@ -253,11 +249,11 @@ public class CLI {
 	private int readInteger(String prompt, int min, int max) {
 		int n = Integer.MAX_VALUE;
 		boolean successful = false;
-		while (!successful) {
+		while (!successful)
 			try {
 				System.out.print(prompt);
 				n = Integer.valueOf(in.nextLine().trim());
-				successful = (n >= min) && (n <= max);
+				successful = n >= min && n <= max;
 				if (!successful) {
 					System.out.println("Input is out of range");
 					continue;
@@ -265,7 +261,6 @@ public class CLI {
 			} catch (NumberFormatException e) {
 				System.out.println("Invalid integer number");
 			}
-		}
 		return n;
 	}
 
@@ -344,11 +339,10 @@ public class CLI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (id > 0) {
+		if (id > 0)
 			System.out.println("Student was saved successfully");
-		} else {
+		else
 			System.out.println("Error saving student");
-		}
 	}
 
 	private void viewOptions() {
