@@ -12,22 +12,18 @@ public class Student extends Borrower implements Model {
 	public static int MAX_BORROW = 5;
 
 	private int student_id_number;
-	private int faculty_id;
+	private String faculty;
 	private int level;
 
 	public Student() {
 		super();
 	}
 
-	public Student(Name name, String ssn, int borrowCount, int student_id_number, int faculty_id, int level) {
+	public Student(Name name, String ssn, int borrowCount, int student_id_number, String faculty, int level) {
 		super(name, ssn, borrowCount);
 		this.student_id_number = student_id_number;
-		this.faculty_id = faculty_id;
+		this.faculty = faculty;
 		this.level = level;
-	}
-
-	public Student(Name name, String ssn, int borrowCount, int student_id_number, Faculty faculty, int level) {
-		this(name, ssn, borrowCount, student_id_number, faculty.getId(), level);
 	}
 
 	public static Student load(int id) throws FileNotFoundException {
@@ -41,7 +37,7 @@ public class Student extends Borrower implements Model {
 		super(rawEntry);
 
 		student_id_number = Integer.valueOf(rawEntry.getData().get(5));
-		faculty_id = Integer.valueOf(rawEntry.getData().get(6));
+		faculty = rawEntry.getData().get(6);
 		level = Integer.valueOf(rawEntry.getData().get(7));
 	}
 
@@ -52,7 +48,7 @@ public class Student extends Borrower implements Model {
 
 		data.add(Borrower.TYPE_STUDENT);
 		data.add(Integer.toString(student_id_number));
-		data.add(Integer.toString(faculty_id));
+		data.add(faculty);
 		data.add(Integer.toString(level));
 
 		return rawEntry;
@@ -60,12 +56,7 @@ public class Student extends Borrower implements Model {
 
 	@Override
 	public String toString() {
-		try {
-			return "{ \"id\": " + id + ", \"Name\": \"" + name + "\", \"SSN\": \"" + ssn + "\", \"IDNumber\": \"" + student_id_number + "\", \"Faculty\": " + getFaculty().toString() + ", \"Level\": " + level + "}";
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return "{ \"id\": " + id + ", \"Name\": \"" + name + "\", \"SSN\": \"" + ssn + "\", \"IDNumber\": \"" + student_id_number + "\", \"Faculty\": " + getFaculty() + ", \"Level\": " + level + "}";
 	}
 
 	public int getStudentIdNumber() {
@@ -76,16 +67,12 @@ public class Student extends Borrower implements Model {
 		this.student_id_number = student_id_number;
 	}
 
-	public int getFacultyId() {
-		return faculty_id;
+	public String getFaculty() {
+		return faculty;
 	}
 
-	public Faculty getFaculty() throws FileNotFoundException {
-		return Faculty.load(faculty_id);
-	}
-
-	public void setFacultyId(int faculty_id) {
-		this.faculty_id = faculty_id;
+	public void setFaculty(String faculty) {
+		this.faculty = faculty;
 	}
 
 	public int getLevel() {

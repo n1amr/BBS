@@ -342,10 +342,11 @@ public class CLI {
 		int borrowCount = 0;
 
 		int student_id_number = readInteger("ID: ");
-		int faculty_id = readInteger("Faculty ID: ");
+		System.out.print("Faculty: ");
+		String faculty = in.nextLine();
 		int level = readInteger("Level: ");
 
-		Student student = new Student(name, ssn, borrowCount, student_id_number, faculty_id, level);
+		Student student = new Student(name, ssn, borrowCount, student_id_number, faculty, level);
 
 		int id = -1;
 		try {
