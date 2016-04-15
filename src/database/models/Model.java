@@ -1,7 +1,6 @@
 package database.models;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import database.RawEntry;
 

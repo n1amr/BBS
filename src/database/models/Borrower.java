@@ -40,6 +40,15 @@ public abstract class Borrower implements Model {
 		this.name = new Name(firstName, lastName);
 		this.ssn = rawEntry.getData().get(2);
 	}
+	public static ArrayList<Borrower> loadAll() throws FileNotFoundException {
+		ArrayList<Borrower> borrowers = new ArrayList<Borrower>();
+
+		ArrayList<RawEntry> rawEntries = Database.getSingleton().loadAll(DatabaseTable.BORROWER);
+		for (RawEntry rawEntry : rawEntries)
+			borrowers.add(BorrowerFactory.load(rawEntry));
+
+		return borrowers;
+	}
 
 	public int getId() {
 		return id;

@@ -1,7 +1,5 @@
 import java.io.IOException;
 
-import database.RawEntry;
-import database.models.Book;
 import database.models.Borrower;
 import database.models.Faculty;
 import database.models.Student;
