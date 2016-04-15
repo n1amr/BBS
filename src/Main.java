@@ -17,13 +17,13 @@ public class Main {
 		int id = borrower.commit();
 		borrower = null;
 		borrower = Borrower.load(id);
-		System.out.println(borrower.MAX_BORROW);
+		System.out.println(borrower.getMaxBorrow());
 
 		Borrower borrower2 = new Faculty(new Name("amr", "alaa"), "ssn", "engineering", "degree");
 		int id2 = borrower2.commit();
 		borrower2 = null;
 		borrower2 = Borrower.load(id2);
-		System.out.println(borrower2.MAX_BORROW);
+		System.out.println(borrower2.getMaxBorrow());
 
 		borrower.remove();
 		borrower2.remove();

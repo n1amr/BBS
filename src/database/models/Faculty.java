@@ -9,7 +9,7 @@ import database.RawEntry;
 import database.models.entities.Name;
 
 public class Faculty extends Borrower implements Model {
-	public static final int MAX_BORROW = 5;
+	public static final int MAX_BORROW = 10;
 
 	private String title;
 	private String degree;
@@ -50,4 +50,7 @@ public class Faculty extends Borrower implements Model {
 		return rawEntry;
 	}
 
+	public int getMaxBorrow() {
+		return MAX_BORROW;
+	}
 }

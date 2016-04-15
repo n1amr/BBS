@@ -68,4 +68,8 @@ public abstract class Borrower implements Model {
 	public void remove() {
 		Database.getSingleton().removeEntry(DatabaseTable.BORROWER, id);
 	}
+
+	public int getMaxBorrow() {
+		return MAX_BORROW;
+	}
 }

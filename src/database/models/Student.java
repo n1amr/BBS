@@ -59,4 +59,7 @@ public class Student extends Borrower implements Model {
 		return rawEntry;
 	}
 
+	public int getMaxBorrow() {
+		return MAX_BORROW;
+	}
 }
