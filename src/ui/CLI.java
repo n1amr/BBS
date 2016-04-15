@@ -1,5 +1,6 @@
 package ui;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,9 +21,8 @@ public class CLI {
 	}
 
 	public void run() {
-		System.out.println("-------------");
-		System.out.println("|  Welcome! |");
-		System.out.println("-------------");
+		System.out.println("Welcome to Book Borrowing System!");
+		System.out.println("=================================");
 
 		int response = -1;
 		while (response != 0) {
@@ -32,26 +32,20 @@ public class CLI {
 			case 1:
 				addNewBook();
 				break;
-
 			case 2:
 				addNewBorrower();
 				break;
-
 			case 3:
 				borrowABook();
 				break;
-
 			case 4:
 				returnABook();
 				break;
-
 			case 5:
 				viewCatalogue();
 				break;
-
 			case 0:
 				return;
-
 			default:
 				System.out.println("Invalid option");
 				break;
@@ -63,50 +57,24 @@ public class CLI {
 
 	private void returnABook() {
 		try {
-			ArrayList<Borrowing> borrowings = Borrowing.loadAll();
+			Borrower borrower = selectBorrower();
 
-			Borrower borrower = null;
-			ArrayList<Borrower> borrowers = Borrower.loadAll();
-			while (borrower == null) {
-				System.out.print("Enter borrower's SSN: ");
-				String ssn = in.nextLine();
-
-				for (Borrower b : borrowers) {
-					if (b.getSsn().equals(ssn)) {
-						borrower = b;
-						break;
-					}
-				}
-				if (borrower == null)
-					System.out.println("Borrower was not found");
+			ArrayList<Borrowing> borrowings = findBorrowerActiveBorrowings(borrower);
+			if (borrowings.isEmpty()) {
+				System.out.println("This borrower has no active borrowing");
+				return;
 			}
-
+			
 			ArrayList<Book> books = new ArrayList<Book>();
 			for (Borrowing b : borrowings) {
-				if (!b.isReturned() && b.getBorrower().getSsn().equals(borrower.getSsn())) {
-					Book bk = b.getBook();
-					books.add(bk);
-					System.out.println("Title: " + bk.getTitle());
-					System.out.println("ISBN: " + bk.getIsbn());
-					System.out.println("----------");
-				}
+				Book bk = b.getBook();
+				books.add(bk);
+				System.out.println("Title: " + bk.getTitle());
+				System.out.println("ISBN: " + bk.getIsbn());
+				System.out.println("----------");
 			}
-
-			Book book = null;
-			while (book == null) {
-				System.out.print("Enter book's ISBN: ");
-				String isbn = in.nextLine();
-
-				for (Book b : books) {
-					if (b.getIsbn().equals(isbn)) {
-						book = b;
-						break;
-					}
-				}
-				if (book == null)
-					System.out.println("Book was not found");
-			}
-
+			
+			Book book = selectBook(books);
 			Borrowing borrowing = null;
 			for (Borrowing b : borrowings) {
 				if (b.getBookId() == book.getId() && b.getBorrowerId() == borrower.getId()) {
@@ -114,18 +82,21 @@ public class CLI {
 					break;
 				}
 			}
-			borrowing.setReturned(true);
-			borrower.setBorrowCount(borrower.getBorrowCount() - 1);
-			book.setAvailability(book.getAvailability() + 1);
 
-			book.commit();
-			borrowing.commit();
-			borrower.commit();
-
+			returnABook(borrowing, borrower, book);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
 
+	private void returnABook(Borrowing borrowing, Borrower borrower, Book book) throws IOException {
+		borrowing.setReturned(true);
+		borrower.setBorrowCount(borrower.getBorrowCount() - 1);
+		book.setAvailability(book.getAvailability() + 1);
+
+		book.commit();
+		borrowing.commit();
+		borrower.commit();
 	}
 
 	private void viewCatalogue() {
@@ -145,65 +116,103 @@ public class CLI {
 
 	private void borrowABook() {
 		try {
-			Book book = null;
-			ArrayList<Book> books = Book.loadAll();
-			while (book == null) {
-				System.out.print("Enter book's ISBN: ");
-				String isbn = in.nextLine();
+			Book book = selectBook();
+			Borrower borrower = selectBorrower();
 
-				for (Book b : books) {
-					if (b.getIsbn().equals(isbn)) {
-						book = b;
-						break;
-					}
-				}
-				if (book == null)
-					System.out.println("Book was not found");
-			}
-
-			Borrower borrower = null;
-			ArrayList<Borrower> borrowers = Borrower.loadAll();
-			while (borrower == null) {
-				System.out.print("Enter borrower's SSN: ");
-				String ssn = in.nextLine();
-
-				for (Borrower b : borrowers) {
-					if (b.getSsn().equals(ssn)) {
-						borrower = b;
-						break;
-					}
-				}
-				if (borrower == null)
-					System.out.println("Borrower was not found");
-			}
-
-			ArrayList<Borrowing> borrowings = Borrowing.loadAll();
-			Borrowing borrowing = null;
+			boolean borrowedBefore = false;
+			ArrayList<Borrowing> borrowings = findBookActiveBorrowings(book);
 			for (Borrowing b : borrowings) {
-				if (b.getBookId() == book.getId() && b.getBorrowerId() == borrower.getId()) {
-					borrowing = b;
+				if (b.getBorrowerId() == borrower.getId()) {
+					borrowedBefore = true;
 					break;
 				}
 			}
 
-			if (borrowing != null) {
+			if (borrowedBefore) {
 				System.out.println("This borrower has already borrowed a copy of this book");
 			} else if (!borrower.canBorrow()) {
 				System.out.println("Borrower has reached their borrow limit.");
 			} else if (book.getAvailability() == 0) {
 				System.out.println("Book has not available copy for borrowing.");
 			} else {
-				borrowing = new Borrowing(book, borrower, new Date());
-				borrower.setBorrowCount(borrower.getBorrowCount() + 1);
-				book.setAvailability(book.getAvailability() - 1);
-
-				book.commit();
-				borrowing.commit();
-				borrower.commit();
+				createBorrowing(borrower, book);
+				System.out.println("Book was successfully borrowed");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private ArrayList<Borrowing> findBookActiveBorrowings(Book book) throws FileNotFoundException {
+		ArrayList<Borrowing> borrowings = Borrowing.loadAll();
+		ArrayList<Borrowing> activeBorrowings = new ArrayList<Borrowing>();
+		for (Borrowing b : borrowings)
+			if (b.getBookId() == book.getId() && !b.isReturned())
+				activeBorrowings.add(b);
+
+		return activeBorrowings;
+	}
+
+	private ArrayList<Borrowing> findBorrowerActiveBorrowings(Borrower borrower) throws FileNotFoundException {
+		ArrayList<Borrowing> borrowings = Borrowing.loadAll();
+		ArrayList<Borrowing> activeBorrowings = new ArrayList<Borrowing>();
+		for (Borrowing b : borrowings)
+			if (b.getBorrowerId() == borrower.getId() && !b.isReturned())
+				activeBorrowings.add(b);
+
+		return activeBorrowings;
+	}
+
+	private Borrower selectBorrower() throws FileNotFoundException {
+		Borrower borrower = null;
+		ArrayList<Borrower> borrowers = Borrower.loadAll();
+		while (borrower == null) {
+			System.out.print("Enter borrower's SSN: ");
+			String ssn = in.nextLine();
+
+			for (Borrower b : borrowers) {
+				if (b.getSsn().equals(ssn)) {
+					borrower = b;
+					break;
+				}
+			}
+			if (borrower == null)
+				System.out.println("Borrower was not found");
+		}
+
+		return borrower;
+	}
+
+	private Book selectBook() throws FileNotFoundException {
+		return selectBook(Book.loadAll());
+	}
+
+	private Book selectBook(ArrayList<Book> books) throws FileNotFoundException {
+		Book book = null;
+		while (book == null) {
+			System.out.print("Enter book's ISBN: ");
+			String isbn = in.nextLine();
+
+			for (Book b : books) {
+				if (b.getIsbn().equals(isbn)) {
+					book = b;
+					break;
+				}
+			}
+			if (book == null)
+				System.out.println("Book was not found");
+		}
+		return book;
+	}
+
+	private void createBorrowing(Borrower borrower, Book book) throws IOException {
+		Borrowing borrowing = new Borrowing(book, borrower, new Date());
+		borrower.setBorrowCount(borrower.getBorrowCount() + 1);
+		book.setAvailability(book.getAvailability() - 1);
+
+		book.commit();
+		borrowing.commit();
+		borrower.commit();
 	}
 
 	private void addNewBook() {
@@ -230,20 +239,15 @@ public class CLI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (id > 0) {
-			System.out.println("Book was saved successfully");
-		} else {
-			System.out.println("Error saving book");
-		}
 
+		if (id > 0)
+			System.out.println("Book was saved successfully");
+		else
+			System.out.println("Error saving book");
 	}
 
 	private int readInteger(String prompt) {
 		return readInteger(prompt, Integer.MIN_VALUE, Integer.MAX_VALUE);
-	}
-
-	private int readInteger(String prompt, int max) {
-		return readInteger(prompt, Integer.MIN_VALUE, max);
 	}
 
 	private int readInteger(String prompt, int min, int max) {
@@ -277,8 +281,8 @@ public class CLI {
 		case 2:
 			addNewFaculty();
 			break;
-
 		default:
+			System.out.println("Invalid input");
 			break;
 		}
 	}
@@ -308,12 +312,11 @@ public class CLI {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if (id > 0) {
-			System.out.println("Faculty was saved successfully");
-		} else {
-			System.out.println("Error saving faculty");
-		}
 
+		if (id > 0)
+			System.out.println("Faculty was saved successfully");
+		else
+			System.out.println("Error saving faculty");
 	}
 
 	private void addNewStudent() {
@@ -346,7 +349,6 @@ public class CLI {
 		} else {
 			System.out.println("Error saving student");
 		}
-
 	}
 
 	private void viewOptions() {
@@ -355,9 +357,7 @@ public class CLI {
 		System.out.println("3- Borrow a book");
 		System.out.println("4- Return a book");
 		System.out.println("5- View books catalogue");
-		System.out.println("6- View borrowing status");
 
 		System.out.println("0- Exit");
-
 	}
 }
