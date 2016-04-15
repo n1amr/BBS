@@ -34,8 +34,8 @@ public class Faculty extends Borrower implements Model {
 	public Faculty(RawEntry rawEntry) {
 		super(rawEntry);
 
-		this.title = rawEntry.getData().get(4);
-		this.degree = rawEntry.getData().get(5);
+		title = rawEntry.getData().get(4);
+		degree = rawEntry.getData().get(5);
 	}
 
 	@Override
@@ -50,7 +50,30 @@ public class Faculty extends Borrower implements Model {
 		return rawEntry;
 	}
 
+	@Override
 	public int getMaxBorrow() {
 		return MAX_BORROW;
 	}
+
+	@Override
+	public String toString() {
+		return "{\"id\": " + id + ", \"Title\": \"" + title + "\", \"Degree\": \"" + degree + "\"}";
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDegree() {
+		return degree;
+	}
+
+	public void setDegree(String degree) {
+		this.degree = degree;
+	}
+
 }

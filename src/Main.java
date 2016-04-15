@@ -1,6 +1,10 @@
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 
+import database.models.Book;
 import database.models.Borrower;
+import database.models.Borrowing;
 import database.models.Faculty;
 import database.models.Student;
 import database.models.entities.Name;
@@ -11,19 +15,21 @@ public class Main {
 		System.out.println("|  Welcome! |");
 		System.out.println("-------------");
 
-		Borrower borrower = new Student(new Name("amr", "alaa"), "ssn", 10, 11, 4);
-		int id = borrower.commit();
-		borrower = null;
-		borrower = Borrower.load(id);
-		System.out.println(borrower.getMaxBorrow());
+		Faculty faculty = new Faculty(new Name("Faculty", "Name"), "faculty_ssn", "facutly_title", "facutly_degree");
+		faculty.commit();
+		Borrower borrower = new Student(new Name("amr", "alaa"), "ssn", 10, faculty, 4);
+		Book book = new Book("ibn", "title", "author", 1, 20, "description", 5);
 
-		Borrower borrower2 = new Faculty(new Name("amr", "alaa"), "ssn", "engineering", "degree");
-		int id2 = borrower2.commit();
-		borrower2 = null;
-		borrower2 = Borrower.load(id2);
-		System.out.println(borrower2.getMaxBorrow());
+		int borrower_id = borrower.commit();
+		int book_id = book.commit();
 
-		borrower.remove();
-		borrower2.remove();
+		Borrowing borrowing = new Borrowing(book, borrower, new Date());
+		int borrowing_id = borrowing.commit();
+
+		ArrayList<Borrowing> borrowings = Borrowing.loadAll();
+		System.out.print("[");
+		for (Borrowing b : borrowings)
+			System.out.print(b + ", ");
+		System.out.println("{}]");
 	}
 }

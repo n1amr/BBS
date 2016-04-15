@@ -37,16 +37,14 @@ public class Database {
 	}
 
 	public int commit(DatabaseTable databaseTable, RawEntry rawEntry) throws IOException {
-		boolean newEntry = (rawEntry.getId() == -1);
-		if (newEntry) {
+		boolean newEntry = rawEntry.getId() == -1;
+		if (newEntry)
 			rawEntry.setId(getLastEntryID(databaseTable) + 1);
-		}
 
 		PrintWriter out = new PrintWriter(getEntryFilename(databaseTable, rawEntry.getId()));
 
-		for (String line : rawEntry.getData()) {
+		for (String line : rawEntry.getData())
 			out.println(line);
-		}
 
 		out.flush();
 		out.close();
@@ -71,7 +69,7 @@ public class Database {
 			out.flush();
 			out.close();
 		}
-		
+
 		Scanner in = new Scanner(file);
 
 		int id = -1;
@@ -79,7 +77,7 @@ public class Database {
 			id = in.nextInt();
 
 		in.close();
-		
+
 		return id;
 	}
 
@@ -100,6 +98,9 @@ public class Database {
 
 	RawEntry load(File entryFile) throws FileNotFoundException {
 		int id = getEntryID(entryFile);
+		if (id == -1)
+			return null;
+
 		RawEntry result = new RawEntry(id, new ArrayList<String>());
 
 		Scanner in = new Scanner(entryFile);
@@ -119,7 +120,8 @@ public class Database {
 
 		for (File entryFile : tableDirectory.listFiles()) {
 			RawEntry entry = load(entryFile);
-			entries.add(entry);
+			if (entry != null)
+				entries.add(entry);
 		}
 
 		return entries;

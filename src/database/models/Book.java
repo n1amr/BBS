@@ -53,6 +53,7 @@ public class Book implements Model {
 		rate = Integer.valueOf(rawEntry.getData().get(6));
 	}
 
+	@Override
 	public RawEntry toRawEntry() {
 		ArrayList<String> data = new ArrayList<String>();
 
@@ -77,20 +78,85 @@ public class Book implements Model {
 		return books;
 	}
 
+	@Override
 	public int commit() throws IOException {
-		return Database.getSingleton().commit(DatabaseTable.BOOK, toRawEntry());
+		return id = Database.getSingleton().commit(DatabaseTable.BOOK, toRawEntry());
 	}
 
+	@Override
 	public void remove() {
 		Database.getSingleton().removeEntry(DatabaseTable.BOOK, id);
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
 
 	@Override
 	public String toString() {
-		return "ISBN: " + isbn + ", " + "Title: " + title + ", " + "Author: " + author + ", " + "Edition: " + edition + ", " + "Availability: " + availability + ", " + "Description: " + description + ", " + "Rate: " + rate;
+		return "{\"id\": " + id + ", \"ISBN\": \"" + isbn + "\", " + "\"Title\": \"" + title + "\", " + "\"Author\": \"" + author + "\", " + "\"Edition\": " + edition + ", " + "\"Availability\": " + availability + ", " + "\"Description\": \"" + description + "\", " + "\"Rate\": " + rate + "}";
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Book && ((Book) obj).getIsbn().equals(isbn);
+	}
+
+	public String getIsbn() {
+		return isbn;
+	}
+
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public int getEdition() {
+		return edition;
+	}
+
+	public void setEdition(int edition) {
+		this.edition = edition;
+	}
+
+	public int getAvailability() {
+		return availability;
+	}
+
+	public void setAvailability(int availability) {
+		this.availability = availability;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getRate() {
+		return rate;
+	}
+
+	public void setRate(int rate) {
+		this.rate = rate;
+	}
+
 }

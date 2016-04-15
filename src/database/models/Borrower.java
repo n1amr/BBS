@@ -37,9 +37,10 @@ public abstract class Borrower implements Model {
 		id = rawEntry.getId();
 		String firstName = rawEntry.getData().get(0);
 		String lastName = rawEntry.getData().get(1);
-		this.name = new Name(firstName, lastName);
-		this.ssn = rawEntry.getData().get(2);
+		name = new Name(firstName, lastName);
+		ssn = rawEntry.getData().get(2);
 	}
+
 	public static ArrayList<Borrower> loadAll() throws FileNotFoundException {
 		ArrayList<Borrower> borrowers = new ArrayList<Borrower>();
 
@@ -50,6 +51,7 @@ public abstract class Borrower implements Model {
 		return borrowers;
 	}
 
+	@Override
 	public int getId() {
 		return id;
 	}
@@ -70,7 +72,7 @@ public abstract class Borrower implements Model {
 
 	@Override
 	public int commit() throws IOException {
-		return Database.getSingleton().commit(DatabaseTable.BORROWER, toRawEntry());
+		return id = Database.getSingleton().commit(DatabaseTable.BORROWER, toRawEntry());
 	}
 
 	@Override
@@ -81,4 +83,31 @@ public abstract class Borrower implements Model {
 	public int getMaxBorrow() {
 		return MAX_BORROW;
 	}
+
+	@Override
+	public String toString() {
+		return "{\"id\": " + id + ", \"Name\": " + name + ", " + "\"SSN\": \"" + ssn + "\"}";
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Borrower && ((Borrower) obj).getSsn().equals(ssn);
+	}
+
+	public Name getName() {
+		return name;
+	}
+
+	public void setName(Name name) {
+		this.name = name;
+	}
+
+	public String getSsn() {
+		return ssn;
+	}
+
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+
 }

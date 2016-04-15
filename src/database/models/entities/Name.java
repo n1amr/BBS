@@ -10,7 +10,17 @@ public class Name {
 	}
 
 	public Name getCopy() {
-		return new Name(this.firstName, this.lastName);
+		return new Name(firstName, lastName);
+	}
+
+	@Override
+	public String toString() {
+		return firstName + " " + lastName;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof Name && ((Name) obj).getFirstName().equals(firstName) && ((Name) obj).getLastName().equals(lastName);
 	}
 
 	public String getFirstName() {

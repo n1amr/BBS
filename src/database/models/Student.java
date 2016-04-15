@@ -11,8 +11,7 @@ import database.models.entities.Name;
 public class Student extends Borrower implements Model {
 	public static final int MAX_BORROW = 5;
 
-	private int student_id;
-	private Faculty faculty = null;
+	private int student_id_number;
 	private int faculty_id;
 	private int level;
 
@@ -20,11 +19,15 @@ public class Student extends Borrower implements Model {
 		super();
 	}
 
-	public Student(Name name, String ssn, int student_id, int faculty_id, int level) {
+	public Student(Name name, String ssn, int student_id_number, int faculty_id, int level) {
 		super(name, ssn);
-		this.student_id = student_id;
+		this.student_id_number = student_id_number;
 		this.faculty_id = faculty_id;
 		this.level = level;
+	}
+
+	public Student(Name name, String ssn, int student_id_number, Faculty faculty, int level) {
+		this(name, ssn, student_id_number, faculty.getId(), level);
 	}
 
 	public static Student load(int id) throws FileNotFoundException {
@@ -37,13 +40,9 @@ public class Student extends Borrower implements Model {
 	public Student(RawEntry rawEntry) {
 		super(rawEntry);
 
-		this.student_id = Integer.valueOf(rawEntry.getData().get(4));
-		this.faculty_id = Integer.valueOf(rawEntry.getData().get(5));
-		this.level = Integer.valueOf(rawEntry.getData().get(6));
-	}
-
-	public Student(Name name, String ssn, int student_id, Faculty faculty, int level) {
-		this(name, ssn, student_id, faculty.getId(), level);
+		student_id_number = Integer.valueOf(rawEntry.getData().get(4));
+		faculty_id = Integer.valueOf(rawEntry.getData().get(5));
+		level = Integer.valueOf(rawEntry.getData().get(6));
 	}
 
 	@Override
@@ -52,14 +51,54 @@ public class Student extends Borrower implements Model {
 		ArrayList<String> data = rawEntry.getData();
 
 		data.add(Borrower.TYPE_STUDENT);
-		data.add(Integer.toString(student_id));
+		data.add(Integer.toString(student_id_number));
 		data.add(Integer.toString(faculty_id));
 		data.add(Integer.toString(level));
 
 		return rawEntry;
 	}
 
+	@Override
 	public int getMaxBorrow() {
 		return MAX_BORROW;
 	}
+
+	@Override
+	public String toString() {
+		try {
+			return "{ \"id\": " + id + ", \"Name\": \"" + name + "\", \"SSN\": \"" + ssn + "\", \"IDNumber\": \"" + student_id_number + "\", \"Faculty\": " + getFaculty().toString() + ", \"Level\": " + level + "}";
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public int getStudentIdNumber() {
+		return student_id_number;
+	}
+
+	public void setStudentIdNumber(int student_id_number) {
+		this.student_id_number = student_id_number;
+	}
+
+	public int getFacultyId() {
+		return faculty_id;
+	}
+
+	public Faculty getFaculty() throws FileNotFoundException {
+		return Faculty.load(faculty_id);
+	}
+
+	public void setFacultyId(int faculty_id) {
+		this.faculty_id = faculty_id;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
 }

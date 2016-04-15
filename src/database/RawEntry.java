@@ -30,9 +30,8 @@ public class RawEntry {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (String s : data) {
+		for (String s : data)
 			sb.append(s + "\n");
-		}
 		return sb.toString();
 	}
 }
