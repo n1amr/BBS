@@ -3,6 +3,7 @@ package ui;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -69,7 +70,14 @@ public class CLI {
 			for (Borrowing b : borrowings) {
 				Book bk = b.getBook();
 				books.add(bk);
+
 				viewBook(bk);
+				Calendar c = Calendar.getInstance();
+				c.setTime(b.getDate());
+				c.add(Calendar.DATE, 21);
+				System.out.println("Borrowing date: " + b.getDate());
+				System.out.println("Return due date: " + c.getTime());
+				System.out.println("==========");
 			}
 
 			Book book = selectBook(books);
