@@ -17,6 +17,8 @@ public class Borrowing implements Model {
 	private int borrower_id;
 	private Date date;
 
+	private boolean returned = false;
+
 	public Borrowing() {
 		id = -1;
 		date = new Date();
@@ -45,6 +47,7 @@ public class Borrowing implements Model {
 		book_id = Integer.valueOf(rawEntry.getData().get(0));
 		borrower_id = Integer.valueOf(rawEntry.getData().get(1));
 		date = new Date(Long.valueOf(rawEntry.getData().get(2)));
+		returned = rawEntry.getData().get(3).equals("true");
 	}
 
 	@Override
@@ -54,6 +57,7 @@ public class Borrowing implements Model {
 		data.add(Integer.toString(book_id));
 		data.add(Integer.toString(borrower_id));
 		data.add(Long.toString(date.getTime()));
+		data.add(Boolean.toString(returned));
 
 		return new RawEntry(id, data);
 	}
@@ -132,6 +136,14 @@ public class Borrowing implements Model {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public boolean isReturned() {
+		return returned;
+	}
+
+	public void setReturned(boolean returned) {
+		this.returned = returned;
 	}
 
 }
