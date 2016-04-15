@@ -9,7 +9,7 @@ import database.RawEntry;
 import database.models.entities.Name;
 
 public class Student extends Borrower implements Model {
-	public static final int MAX_BORROW = 5;
+	public static int MAX_BORROW = 5;
 
 	private int student_id_number;
 	private int faculty_id;
@@ -59,11 +59,6 @@ public class Student extends Borrower implements Model {
 	}
 
 	@Override
-	public int getMaxBorrow() {
-		return MAX_BORROW;
-	}
-
-	@Override
 	public String toString() {
 		try {
 			return "{ \"id\": " + id + ", \"Name\": \"" + name + "\", \"SSN\": \"" + ssn + "\", \"IDNumber\": \"" + student_id_number + "\", \"Faculty\": " + getFaculty().toString() + ", \"Level\": " + level + "}";
@@ -99,6 +94,9 @@ public class Student extends Borrower implements Model {
 
 	public void setLevel(int level) {
 		this.level = level;
+	}
+	public boolean canBorrow() {
+		return borrowCount < 5;
 	}
 
 }

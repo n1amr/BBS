@@ -106,8 +106,21 @@ public class CLI {
 					System.out.println("Borrower was not found");
 			}
 
-			Borrowing borrowing = new Borrowing(book, borrower, new Date());
-			borrowing.commit();
+			System.out.println(borrower.getBorrowCount());
+
+			if (!borrower.canBorrow()) {
+				System.out.println("Borrower has reached their borrow limit.");
+			} else if (book.getAvailability() == 0) {
+				System.out.println("Book has not available copy for borrowing.");
+			} else {
+				Borrowing borrowing = new Borrowing(book, borrower, new Date());
+				borrower.setBorrowCount(borrower.getBorrowCount() + 1);
+				book.setAvailability(book.getAvailability() - 1);
+
+				book.commit();
+				borrowing.commit();
+				borrower.commit();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

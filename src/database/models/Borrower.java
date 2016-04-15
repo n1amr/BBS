@@ -16,7 +16,7 @@ public abstract class Borrower implements Model {
 	protected String ssn;
 	protected int borrowCount = 0;
 
-	public static final int MAX_BORROW = 0;
+	
 
 	public Borrower() {
 		id = -1;
@@ -84,20 +84,17 @@ public abstract class Borrower implements Model {
 		Database.getSingleton().removeEntry(DatabaseTable.BORROWER, id);
 	}
 
-	public int getMaxBorrow() {
-		return MAX_BORROW;
-	}
 
 	public int getBorrowCount() {
 		return borrowCount;
 	}
 
-	public void getBorrowCount(int borrowCount) {
+	public void setBorrowCount(int borrowCount) {
 		this.borrowCount = borrowCount;
 	}
 
 	public boolean canBorrow() {
-		return borrowCount < MAX_BORROW;
+		return borrowCount < 0;
 	}
 
 	@Override
